@@ -3,6 +3,8 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const { v4: uuidv4 } = require("uuid");
+const { readFileModel } = require("../Models/readFileModel");
+const { writeFileModel } = require("../Models/writeFileModel");
 
 exports.createUserService = (user) => {
   if (
@@ -21,29 +23,22 @@ exports.createUserService = (user) => {
   } else {
     const hash = bcrypt.hashSync(user.password, 10);
     user.password = hash;
-    let users = readFile();
+    let users = readFileModel();
     user = { id: uuidv4(), ...user };
     users.push(user);
     let json = JSON.stringify(users);
-    fs.writeFile("data.json", json, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-    return {
-      success: true,
-      body: `Thank You For The Registration ${user.fName}`,
-    };
+    writeFileModel(json);
+    return { success: true, body: `Thank you for registration ${user.fName}` };
   }
 };
 
 exports.getAllUsersService = () => {
-  var responseArray = readFile();
+  var responseArray = readFileModel();
   return responseArray;
 };
 
 exports.getSingleUserService = (id) => {
-  const users = readFile();
+  const users = readFileModel();
   var result = users.find(function (e) {
     return e.id === id;
   });
@@ -55,23 +50,20 @@ exports.getSingleUserService = (id) => {
 };
 
 exports.deleteUserService = (id) => {
-  const users = readFile();
+  const users = readFileModel();
   const filteredUsers = users.filter((user) => user.id !== id);
   if (filteredUsers.length === users.length) {
     return { success: false, response: "Value doesn't exists" };
   } else {
     let json = JSON.stringify(filteredUsers);
-    fs.writeFile("data.json", json, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+
+    writeFileModel(json);
     return { success: true, response: `User is deleted with id ${id}` };
   }
 };
 
 exports.updateUserService = (id, body) => {
-  let users = readFile();
+  let users = readFileModel();
   var dataToBeUpdated = body;
   var findId = (user) => {
     return user.id === id;
@@ -94,20 +86,13 @@ exports.updateUserService = (id, body) => {
     checkId.address = dataToBeUpdated.address;
     filteredUsers.push(checkId);
     let json = JSON.stringify(filteredUsers);
-    fs.writeFile("data.json", json, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+    writeFileModel(json);
   }
   return { success: true, response: `User Data Updated ${id}` };
 };
-const readFile = () => {
-  const jsonData = fs.readFileSync("data.json");
-  return JSON.parse(jsonData);
-};
+
 const isEmailExists = (email) => {
-  const users = readFile();
+  const users = readFileModel();
   for (let i = 0; i < users.length; i++) {
     if (users[i].email === email) {
       return true;

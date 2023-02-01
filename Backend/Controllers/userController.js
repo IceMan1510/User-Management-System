@@ -10,7 +10,7 @@ const {
 exports.addUser = (req, res) => {
   var serviceResponse = createUserService(req.body);
 
-  if (serviceResponse.success === true) {
+  if (serviceResponse.success) {
     res.status(200).send(serviceResponse.body);
   } else {
     res.status(400).send(serviceResponse.error);
