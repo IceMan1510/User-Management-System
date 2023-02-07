@@ -1,5 +1,5 @@
 <script>
-  import Users from "./Users.svelte";
+  import UserManagement from "./Module/UserManagement.svelte";
 </script>
 
-<Users />
+<UserManagement />
