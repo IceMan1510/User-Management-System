@@ -1,6 +1,7 @@
 <script>
   import AddUser from "./UserForm.svelte";
   import Dashboard from "../UserAction/Dashboard.svelte";
+  import { Confirm } from "svelte-confirm";
   let block = "dashboard";
   let dataToBeUpdated = "";
   let userData = [];

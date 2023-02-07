@@ -1,1 +1,62 @@
-[{"id":"4de07730-77dd-41a5-bd61-38ba39097878","fName":"Rohit","mName":"S","lName":"Nale","gender":"Female","dob":"11/11/2011","email":"rohit@indx.ai","password":"$2b$10$AEliUaFSOD.ZkNsR.fhMru8aJK/3LziNKlzqnKW4Czup54z/hfdkq","contact":"1234567834","address":"27, West Front, PA 203345"},{"id":"65ebeae9-3b0f-4eb7-bb18-ae1747b6b708","fName":"Ankit","mName":"S","lName":"Bisht","gender":"Male","dob":"05/07/2001","email":"ankit@indx.ai","password":"$2b$10$UgglT5xMMmawVzWoIA3T2eA6MRXGEBwi8zcxTx/0kmYtYhoeTXIEy","contact":"1234567834","address":"27, West Front, PA 203345"},{"id":"54f9d975-4dd8-4d26-a98c-3d9a778e41c9","fName":"Sumit","mName":"X","lName":"Haldar","gender":"Male","dob":"02/03/2004","email":"sumit@indx.ai","password":"$2b$10$DSLeLAmnD8Nvpze5MJyTTuLLlYw5USgtYdf/mjZLU0ncKXJwES4v.","contact":"1234567834","address":"27, East Front, PA 203345"},{"id":"1824b79d-4e17-4d00-bc8b-fca67f8a6133","fName":"John","mName":"D","lName":"Cena","gender":"Male","dob":"03/04/2005","email":"ycsm@indx.ai","password":"$2b$10$RO50GSl73mS.ajVEFM9enu/PFRUUpLvU.TWnmAtpX4cbz9efuPLg6","contact":"1234567834","address":"27, East Front, PA 203345"},{"id":"e2bda5d0-7a8c-4833-b703-1a1ff4978c1c","fName":"Kuldeep","mName":"Bhau","lName":"Magar","gender":"Male","dob":"01/01/2011","email":"kuldeep@indx.ai","password":"$2b$10$DhpuIFxxs67P8DvWadRCi.0anAwFnTaXjH1rifjsKlv2gJXBn98Ti","contact":"1234567834","address":"27, East Front, PA 203345"}]
+[
+  {
+    "id": "4de07730-77dd-41a5-bd61-38ba39097878",
+    "fName": "Rohit",
+    "mName": "S",
+    "lName": "Nale",
+    "gender": "Female",
+    "dob": "11/11/2011",
+    "email": "rohit@indx.ai",
+    "password": "$2b$10$AEliUaFSOD.ZkNsR.fhMru8aJK/3LziNKlzqnKW4Czup54z/hfdkq",
+    "contact": "1234567834",
+    "address": "27, West Front, PA 203345"
+  },
+  {
+    "id": "65ebeae9-3b0f-4eb7-bb18-ae1747b6b708",
+    "fName": "Ankit",
+    "mName": "S",
+    "lName": "Bisht",
+    "gender": "Male",
+    "dob": "05/07/2001",
+    "email": "ankit@indx.ai",
+    "password": "$2b$10$UgglT5xMMmawVzWoIA3T2eA6MRXGEBwi8zcxTx/0kmYtYhoeTXIEy",
+    "contact": "1234567834",
+    "address": "27, West Front, PA 203345"
+  },
+  {
+    "id": "54f9d975-4dd8-4d26-a98c-3d9a778e41c9",
+    "fName": "Sumit",
+    "mName": "X",
+    "lName": "Haldar",
+    "gender": "Male",
+    "dob": "02/03/2004",
+    "email": "sumit@indx.ai",
+    "password": "$2b$10$DSLeLAmnD8Nvpze5MJyTTuLLlYw5USgtYdf/mjZLU0ncKXJwES4v.",
+    "contact": "1234567834",
+    "address": "27, East Front, PA 203345"
+  },
+  {
+    "id": "1824b79d-4e17-4d00-bc8b-fca67f8a6133",
+    "fName": "John",
+    "mName": "D",
+    "lName": "Cena",
+    "gender": "Male",
+    "dob": "03/04/2005",
+    "email": "ycsm@indx.ai",
+    "password": "$2b$10$RO50GSl73mS.ajVEFM9enu/PFRUUpLvU.TWnmAtpX4cbz9efuPLg6",
+    "contact": "1234567834",
+    "address": "27, East Front, PA 203345"
+  },
+  {
+    "id": "e2bda5d0-7a8c-4833-b703-1a1ff4978c1c",
+    "fName": "Kuldeep",
+    "mName": "Bhau",
+    "lName": "Magar",
+    "gender": "Male",
+    "dob": "01/01/2011",
+    "email": "kuldeep@indx.ai",
+    "password": "$2b$10$DhpuIFxxs67P8DvWadRCi.0anAwFnTaXjH1rifjsKlv2gJXBn98Ti",
+    "contact": "1234567834",
+    "address": "27, East Front, PA 203345"
+  }
+]

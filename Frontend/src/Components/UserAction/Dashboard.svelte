@@ -1,6 +1,11 @@
 <script>
   import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
+  import { Confirm } from "svelte-confirm";
+  import { toast } from "@zerodevx/svelte-toast";
+  export let userData;
+  export let fetchData;
+  import { fade, fly, slide, scale } from "svelte/transition";
   const dispatch = createEventDispatcher();
   const handleDelete = (id) => {
     dispatch("delete", id);
@@ -8,9 +13,7 @@
   const handleUpdate = (data) => {
     dispatch("update", data);
   };
-  export let userData;
-  export let fetchData;
-  import { fade, fly, slide, scale } from "svelte/transition";
+
   onMount(() => {
     fetchData();
   });
@@ -56,13 +59,34 @@
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded"
                 >Edit</button
               >
-              <button
+
+              <!-- <button
                 on:click={() => {
                   handleDelete(uData.id);
                 }}
                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 border border-red-500 rounded"
                 >Delete</button
+              > -->
+              <Confirm
+                confirmTitle="Delete"
+                cancelTitle="Cancel"
+                let:confirm={confirmThis}
               >
+                <button
+                  viewBox="0 0 24 24"
+                  on:click={() => confirmThis(handleDelete, uData.id)}
+                  class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 border border-red-500 rounded"
+                >
+                  <path
+                    fill="hsl(200, 40%, 20%)"
+                    d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
+                  />Delete
+                </button>
+                <span slot="title"> Delete this user? </span>
+                <span slot="description">
+                  You won't be able to revert this!
+                </span>
+              </Confirm>
             </td>
           </tr>
         {/each}
