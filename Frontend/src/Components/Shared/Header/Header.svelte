@@ -1,3 +1,4 @@
+<!-- This component is for header area and only contains basic user design -->
 <div class="headContainer">
   <nav
     class="bg-gray-50 border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900 "
@@ -26,5 +27,6 @@
   .headContainer {
     padding-bottom: 10px;
     background-color: rgb(249, 250, 251);
+    border-bottom: 1px solid white;
   }
 </style>

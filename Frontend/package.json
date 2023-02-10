@@ -19,7 +19,10 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "flowbite-svelte": "^0.29.13",
     "sirv-cli": "^2.0.0",
-    "svelte-confirm": "^0.0.0"
+    "svelte-confirm": "^0.0.0",
+    "svelte-french-toast": "^1.0.3",
+    "svelte-toasts": "^1.1.2"
   }
 }

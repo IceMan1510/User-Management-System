@@ -1,15 +1,29 @@
+<!-- 
+@requires package:onMount
+@requires package:svelte/transition
+@requires package:createEventDispatcher
+@requires library:svelte-confirm
+ -->
 <script>
   import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
   import { Confirm } from "svelte-confirm";
-  import { toast } from "@zerodevx/svelte-toast";
+
   export let userData;
   export let fetchData;
   import { fade, fly, slide, scale } from "svelte/transition";
   const dispatch = createEventDispatcher();
+  /**
+   *  Broadcast the delete event once the user clicks on the delete button in the table.
+   *  @param {string}-The id of the user clicked.
+   */
   const handleDelete = (id) => {
     dispatch("delete", id);
   };
+  /**
+   *  Broadcast the update event once the user clicks on the edit button in the table.
+   *  @param {Object}-The object data of the user clicked.
+   */
   const handleUpdate = (data) => {
     dispatch("update", data);
   };
@@ -83,9 +97,6 @@
                   />Delete
                 </button>
                 <span slot="title"> Delete this user? </span>
-                <span slot="description">
-                  You won't be able to revert this!
-                </span>
               </Confirm>
             </td>
           </tr>

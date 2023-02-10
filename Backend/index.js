@@ -1,3 +1,9 @@
+/**
+ * @requires module:express
+ * @requires module:Routes/userRoutes.js
+ * @requires module:cors
+ * @requires module:body-parser
+ */
 const express = require("express");
 const userRoute = require("./Routes/userRoutes.js");
 const app = express();
