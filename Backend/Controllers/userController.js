@@ -51,11 +51,12 @@ exports.addUser = (req, res) => {
  * @param {*} res
  *  @returns {status} 200 for ok and 400 for bad request.
  */
+
 exports.getUsers = (req, res) => {
   const params = req.params;
   if (JSON.stringify(params) === "{}") {
-    var serviceResponse = getAllUsersService;
-    res.status(200).send(serviceResponse());
+    var serviceResponse = getAllUsersService(req.query.page);
+    res.status(200).send(serviceResponse);
   } else {
     var serviceResponse = getSingleUserService(params.id);
     if (serviceResponse === false) {

@@ -6,6 +6,10 @@
   import Header from "../Shared/Header/Header.svelte";
   let userData = [];
   let dataToBeUpdated = "";
+  let totalPages = 0;
+  let totalRecords = 0;
+  $: page = 1;
+  let totalRecordPerPage = "";
 
   let block = "dashboard";
   $: buttonStatusOnEvent = (event) => {
@@ -17,14 +21,32 @@
       console.log(block);
     }
   };
+  $: pageNumber = (e) => {
+    if (e.detail.message === "next" && page < totalPages) {
+      page++;
+      fetchData();
+    } else if (e.detail.message === "prev" && page > 1 && page <= totalPages) {
+      page--;
+      fetchData();
+      console.log("prev pressed");
+    } else if (e.detail > 0 && e.detail <= totalPages) {
+      page = e.detail;
+      fetchData();
+    }
+  };
 
   const fetchData = async () => {
     try {
-      const url = "http://localhost:4000/user/";
+      const url = `http://localhost:4000/user/?page=${page}`;
+
       const res = await fetch(url, {
         method: "GET",
       });
-      userData = await res.json();
+      let response = await res.json();
+      userData = response.data;
+      totalPages = response.totalPages; // Total number of pages (totalrecord/8)
+      totalRecords = response.totalRecords; //Total record in the db
+      totalRecordPerPage = userData.length; //Records per page
     } catch (error) {
       console.log(error);
     }
@@ -50,6 +72,7 @@
       toast.success(`User Data Deleted Successfully`, {
         position: "bottom-center",
       });
+      fetchData();
     } catch (error) {
       console.log(error);
     }
@@ -107,6 +130,7 @@
           toast.success(`Data Updated For ${updatedData.fName}`, {
             position: "bottom-center",
           });
+          await fetchData();
         } else {
           toast.error(`Please Enter Appropriate Data`, {
             position: "bottom-center",
@@ -167,6 +191,8 @@
           toast.success(`${response}`, {
             position: "bottom-center",
           });
+          fetchData();
+          page = totalPages;
         } else {
           toast.error(`${response}`, {
             position: "bottom-center",
@@ -185,8 +211,15 @@
   <Table
     {userData}
     {fetchData}
+    {totalRecords}
+    {totalPages}
+    {totalRecordPerPage}
+    {page}
     on:delete={deleteClick}
     on:update={updateDataSend}
+    on:page={pageNumber}
+    on:next={pageNumber}
+    on:prev={pageNumber}
   />
 {:else if block === "userForm"}
   <UserForm on:post={doPost} />

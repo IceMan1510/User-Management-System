@@ -2,8 +2,13 @@
   import { createEventDispatcher, onMount } from "svelte";
   import { Confirm } from "svelte-confirm";
   const dispatch = createEventDispatcher();
+
   export let userData;
   export let fetchData;
+  export let totalRecords;
+  export let totalPages;
+  export let totalRecordPerPage;
+
   /**
    *  Broadcast the delete event once the user clicks on the delete button in the table.
    *  @param {string}-The id of the user clicked.
@@ -17,6 +22,15 @@
    */
   const handleUpdate = (data) => {
     dispatch("update", data);
+  };
+  const handlePage = (page) => {
+    dispatch("page", page);
+  };
+  const handlePrev = () => {
+    dispatch("prev", { message: "prev" });
+  };
+  const handleNext = () => {
+    dispatch("next", { message: "next" });
   };
   onMount(() => {
     fetchData();
@@ -51,7 +65,10 @@
 
             <td>
               <span class="but"
-                ><a class="settings" title="Settings" data-toggle="tooltip"
+                ><a
+                  class="settings"
+                  data-toggle="tooltip"
+                  title="Edit User Data"
                   ><i class="material-icons" on:click={handleUpdate(uData)}
                     >&#xE8B8;</i
                   ></a
@@ -64,7 +81,7 @@
                 ><span class="but"
                   ><a
                     class="delete"
-                    title="Delete"
+                    title="Delete User"
                     data-toggle="tooltip"
                     on:click={() => confirmThis(handleDelete, uData.id)}
                   >
@@ -82,17 +99,39 @@
       </tbody>
     </table>
     <div class="clearfix">
-      <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+      <div class="hint-text">
+        Showing <b>{totalRecordPerPage}</b> out of <b>{totalRecords}</b> entries
+      </div>
       <ul class="pagination">
-        <li class="page-item disabled"><a href="#">Previous</a></li>
-        <li class="page-item"><a href="#" class="page-link">1</a></li>
-        <li class="page-item"><a href="#" class="page-link">2</a></li>
-        <li class="page-item active">
-          <a href="#" class="page-link">3</a>
+        <li class="page-item">
+          <a
+            href="#"
+            class="page-link"
+            on:click={() => {
+              handlePrev();
+            }}>Previous</a
+          >
         </li>
-        <li class="page-item"><a href="#" class="page-link">4</a></li>
-        <li class="page-item"><a href="#" class="page-link">5</a></li>
-        <li class="page-item"><a href="#" class="page-link">Next</a></li>
+        {#each Array(totalPages) as tp, i}
+          <li class="page-item">
+            <a
+              href="#"
+              on:click={() => {
+                handlePage(i);
+              }}
+              class="page-link">{i++ + 1}</a
+            >
+          </li>
+        {/each}
+        <li class="page-item ">
+          <a
+            href="#"
+            class="page-link"
+            on:click={() => {
+              handleNext();
+            }}>Next</a
+          >
+        </li>
       </ul>
     </div>
   </div>

@@ -35,9 +35,18 @@ exports.createUserService = (user) => {
  *
  *  @returns {Array} - Array of user data objects
  */
-exports.getAllUsersService = () => {
-  var responseArray = readFileModel();
-  return responseArray;
+exports.getAllUsersService = (page) => {
+  var users = readFileModel();
+  var size = users.length;
+
+  var s = (page - 1) * 8;
+  var e = page * 8;
+  var pageLimit = Math.ceil(size / 8);
+  return {
+    totalRecords: users.length,
+    totalPages: pageLimit,
+    data: users.slice(s, e),
+  };
 };
 
 /**
@@ -80,26 +89,27 @@ exports.deleteUserService = (filteredUsers, id) => {
 exports.updateUserService = (id, body) => {
   let users = readFileModel();
   var dataToBeUpdated = body;
-  var findId = (user) => {
-    return user.id === id;
-  };
-  var checkId = users.find(findId);
-  if (checkId === undefined) {
+  var index = undefined;
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].id === id) {
+      index = i;
+    }
+  }
+  if (index === undefined) {
     return { success: false, response: "Value doesn't exists" };
   } else {
-    let filteredUsers = users.filter((user) => user.id !== id);
-    checkId.fName = dataToBeUpdated.fName;
-    checkId.mName = dataToBeUpdated.mName;
-    checkId.lName = dataToBeUpdated.lName;
-    checkId.gender = dataToBeUpdated.gender;
-    checkId.dob = dataToBeUpdated.dob;
-    checkId.email = dataToBeUpdated.email;
+    users[index].fName = dataToBeUpdated.fName;
+    users[index].mName = dataToBeUpdated.mName;
+    users[index].lName = dataToBeUpdated.lName;
+    users[index].gender = dataToBeUpdated.gender;
+    users[index].dob = dataToBeUpdated.dob;
+    users[index].email = dataToBeUpdated.email;
     const hash = bcrypt.hashSync(dataToBeUpdated.password, 10);
-    checkId.password = hash;
-    checkId.contact = dataToBeUpdated.contact;
-    checkId.address = dataToBeUpdated.address;
-    filteredUsers.push(checkId);
-    let json = JSON.stringify(filteredUsers);
+    users[index].password = hash;
+    users[index].contact = dataToBeUpdated.contact;
+    users[index].address = dataToBeUpdated.address;
+
+    let json = JSON.stringify(users);
     writeFileModel(json);
   }
   return { success: true, response: `User Data Updated ${id}` };
