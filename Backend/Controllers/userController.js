@@ -27,7 +27,7 @@ const {
 let checkPwd = (str) => {
   if (
     str.length < 8 ||
-    str.length > 50 ||
+    str.length > 500 ||
     str.search(/\d/) == -1 ||
     str.search(/[a-zA-Z]/) == -1 ||
     str.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+\.\,\;\:]/) != -1
@@ -65,8 +65,7 @@ var checkDate = (date) => {
     return true;
   }
 };
-exports.addUser = (req, res) => {
-  const user = req.body;
+var allValid = (user) => {
   if (
     user.fName.trim() === "" ||
     !validator.isAlpha(user.lName) ||
@@ -87,8 +86,17 @@ exports.addUser = (req, res) => {
     user.address.trim() === "" ||
     user.address1.trim() === "" ||
     user.state === "Select State" ||
-    user.city === ""
+    user.city.trim() === "" ||
+    user.landmark.trim() === ""
   ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+exports.addUser = (req, res) => {
+  const user = req.body;
+  if (allValid(user)) {
     res.status(400).send("Please enter appropriate data");
   } else if (isEmailExists(user.email)) {
     res.status(400).send("Email already exists");
@@ -140,20 +148,7 @@ exports.deleteUser = (req, res) => {
  */
 exports.updateUser = (req, res) => {
   let user = req.body;
-  if (
-    user.fName.trim() === "" ||
-    !validator.isAlpha(user.lName) ||
-    !validator.isAlpha(user.mName) ||
-    user.mName.trim() === "" ||
-    user.lName.trim() === "" ||
-    !validator.isEmail(user.email) ||
-    !validator.isAlpha(user.fName) ||
-    user.password.trim() === "" ||
-    user.address.trim() === "" ||
-    user.dob.trim() === "" ||
-    user.contact.trim() === "" ||
-    validator.isAlpha(user.contact)
-  ) {
+  if (allValid(user)) {
     res.status(400).send("Please enter appropriate data");
   } else {
     var serviceResponse = updateUserService(req.params.id, req.body);

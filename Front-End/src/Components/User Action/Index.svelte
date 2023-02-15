@@ -16,12 +16,13 @@
 
   let totalRecordPerPage = "";
 
-  $: block = "userForm";
+  $: block = "dashboard";
   $: buttonStatusOnEvent = (event) => {
     if (event.detail.block === "userForm") {
       block = "userForm";
       console.log(block);
     } else if (event.detail.block === "dashboard") {
+      page = 1;
       block = "dashboard";
       console.log(block);
     } else if (event.detail.block === "searchField") {
@@ -34,6 +35,7 @@
   $: pageNumber = (e) => {
     if (e.detail.message === "next" && page < totalPages) {
       page++;
+
       fetchData();
     } else if (e.detail.message === "prev" && page > 1 && page <= totalPages) {
       page--;
@@ -133,6 +135,9 @@
               password: updatedData.password,
               contact: updatedData.contact,
               address: updatedData.address,
+              address1: updatedData.address1,
+              landmark: updatedData.landmark,
+              city: dataToBeUpdated.city,
               state: updatedData.state,
               pinCode: updatedData.pinCode,
             }),
@@ -185,9 +190,11 @@
     // console.log(e.detail);
     try {
       let dataToBeAdded = e.detail;
+      console.log(dataToBeAdded);
       if (dataToBeAdded.confirmPassword !== dataToBeAdded.password) {
         dataToBeAdded.password = "";
       }
+
       const res = await fetch("http://localhost:4000/user/", {
         method: "POST",
         headers: {
@@ -203,7 +210,11 @@
           password: dataToBeAdded.password,
           contact: dataToBeAdded.contact,
           address: dataToBeAdded.address,
+          address1: dataToBeAdded.address1,
+          landmark: dataToBeAdded.landmark,
+          city: dataToBeAdded.city,
           state: dataToBeAdded.state,
+
           pinCode: dataToBeAdded.pinCode,
         }),
       });

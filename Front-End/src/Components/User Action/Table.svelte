@@ -5,7 +5,13 @@
   import { Confirm } from "svelte-confirm";
   import Loader from "../Shared/Loader/Loader.svelte";
   const dispatch = createEventDispatcher();
-  let outer = 1;
+  var formatDate = (dateString) => {
+    const date = new Date(dateString); // create a new Date object
+    const day = date.getDate().toString().padStart(2, "0"); // get day and pad with leading zero if necessary
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // get month and pad with leading zero if necessary
+    const year = date.getFullYear(); // get year
+    return `${day}/${month}/${year}`; // concatenate day, month, and year in the desired format
+  };
 
   export let userData;
   export let fetchData;
@@ -14,7 +20,7 @@
   export let searchData;
   export let totalRecordPerPage;
   export let page;
-  console.log(userData);
+  console.log(page);
 
   /**
    *  Broadcast the delete event once the user clicks on the delete button in the table.
@@ -78,9 +84,9 @@
                 {uData.lName}</td
               >
               <td>{uData.gender}</td>
-              <td>{uData.dob}</td>
+              <td>{formatDate(uData.dob)}</td>
               <td>{uData.email}</td>
-              <td>{uData.address}</td>
+              <td>{uData.city}, {uData.state}</td>
 
               <td>
                 <span class="but"
@@ -128,6 +134,7 @@
               class={1 === page ? "invisible" : "page-link"}
               on:click={() => {
                 handlePrev();
+
                 loading = true;
                 setTimeout(() => {
                   loading = false;

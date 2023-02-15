@@ -22,6 +22,7 @@ exports.createUserService = (user) => {
   user.password = hash;
   let users = readFileModel();
   user = { id: uuidv4(), ...user };
+
   users.push(user);
   let json = JSON.stringify(users);
   writeFileModel(json);
@@ -104,6 +105,7 @@ exports.updateUserService = (id, body) => {
     users[index].contact = dataToBeUpdated.contact;
     users[index].address = dataToBeUpdated.address;
     users[index].address1 = dataToBeUpdated.address1;
+    users[index].landmark = dataToBeUpdated.landmark;
     users[index].city = dataToBeUpdated.city;
     users[index].state = dataToBeUpdated.state;
     users[index].pinCode = dataToBeUpdated.pinCode;

@@ -2,9 +2,10 @@
   //  disabled={validateButton(userDetail)}
   let firstLoad = false;
   import { createEventDispatcher } from "svelte";
-  import { empty } from "svelte/internal";
+
   const handleButton = (dataToBeUpdated) => {
     firstLoad = true;
+
     if (dataToBeUpdated === undefined || dataToBeUpdated === "") {
       handlePost();
     } else {
@@ -15,7 +16,7 @@
   let checkPwd = (str) => {
     if (
       str.length < 8 ||
-      str.length > 50 ||
+      str.length > 500 ||
       str.search(/\d/) == -1 ||
       str.search(/[a-zA-Z]/) == -1 ||
       str.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+\.\,\;\:]/) != -1
@@ -88,6 +89,7 @@
       contact: "",
       address: "",
       address1: "",
+      landmark: "",
       city: "",
       state: "Select State",
       pinCode: "",
@@ -106,6 +108,7 @@
       contact: dataToBeUpdated.contact,
       address: dataToBeUpdated.address,
       address1: dataToBeUpdated.address1,
+      landmark: dataToBeUpdated.landmark,
       city: dataToBeUpdated.city,
       state: dataToBeUpdated.state,
       pinCode: dataToBeUpdated.pinCode,
@@ -132,7 +135,7 @@
           <input
             type="text"
             name="firstName"
-            title="Only alphabets are allowed"
+            title="Enter a valid name"
             class={firstLoad && !validation(userDetail.fName)
               ? "form-control is-invalid"
               : "form-control"}
@@ -150,7 +153,7 @@
           <input
             type="text"
             name="LastName"
-            title="Only alphabets are allowed"
+            title="Enter a valid middle name"
             bind:value={userDetail.mName}
             placeholder="Middle Name"
             class={firstLoad && !validation(userDetail.mName)
@@ -167,7 +170,7 @@
           <input
             type="text"
             name="firstName"
-            title="Only alphabets are allowed"
+            title="Enter a valid last name"
             bind:value={userDetail.lName}
             placeholder="Last Name"
             class={firstLoad && !validation(userDetail.lName)
@@ -205,7 +208,7 @@
             type="Contact"
             required
             name="Contact"
-            title="Should be equal to 10 digits"
+            title="Enter a password"
             class={firstLoad && !validateContactNumber(userDetail.contact)
               ? "form-control is-invalid"
               : "form-control"}
@@ -317,42 +320,62 @@
           </div>
         </div>
       </div>
-      <div class="twoPassword">
-        <div class="pwd">
-          <label for="email" class="fl fontLabel">
-            Address Line 1 <span class="required">*</span> :</label
-          >
+      <div class="threeNames">
+        <div class="one">
+          <label for="firstName" class="fl fontLabel">
+            Building/Apartment <span class="required">*</span> :
+          </label>
+          <!-- svelte-ignore a11y-autofocus -->
           <input
-            type="Address Line 1"
-            required
-            name="Address Line 1"
-            title="Street address, P.O box, company name, c/o"
-            bind:value={userDetail.address}
-            placeholder="Address Line 1"
+            type="text"
+            name="firstName"
+            title="Enter building/apartment name"
             class={firstLoad && userDetail.address.trim() === ""
               ? "form-control is-invalid"
               : "form-control"}
+            bind:value={userDetail.address}
+            placeholder="Building/Apartment"
+            autofocus="on"
+            required
           />
-          <div class="invalid-feedback">Please enter a valid address line</div>
+          <div class="invalid-feedback">Please enter a building/apartment</div>
         </div>
-        <div class="cnfpwd">
-          <label for="Address Line 2" class="fl fontLabel">
-            Address Line 2 <span class="required">*</span> :</label
+        <div class="two">
+          <label for="middleName" class="fl fontLabel">
+            Street/Locality : <span class="required">*</span></label
           >
           <input
-            type="Address Line 2"
-            required
-            title="Apartment, suite, unit, building, floor, etc"
-            name="Address Line 2"
+            type="text"
+            name="LastName"
+            title="Enter Street/Locality"
+            bind:value={userDetail.address1}
+            placeholder="Street/Locality"
             class={firstLoad && userDetail.address1.trim() === ""
               ? "form-control is-invalid"
               : "form-control"}
-            bind:value={userDetail.address1}
-            placeholder="Address Line 2"
+            required
           />
-          <div class="invalid-feedback">Please enter a valid address line</div>
+          <div class="invalid-feedback">Please enter a valid data</div>
+        </div>
+        <div class="three">
+          <label for="lastName" class="fl fontLabel">
+            Landmark <span class="required">*</span> :
+          </label>
+          <input
+            type="text"
+            name="firstName"
+            title="Enter landmark"
+            bind:value={userDetail.landmark}
+            placeholder="Landmark"
+            class={firstLoad && userDetail.landmark.trim() === ""
+              ? "form-control is-invalid"
+              : "form-control"}
+            required
+          />
+          <div class="invalid-feedback">Please enter a valid data</div>
         </div>
       </div>
+
       <div class="threeNames">
         <div class="one">
           <label for="address" class="fl fontLabel">
@@ -554,6 +577,6 @@
     margin-top: 0;
     font-size: 0.875em;
     margin-left: 15px;
-    color: red;
+    color: #de3545;
   }
 </style>
