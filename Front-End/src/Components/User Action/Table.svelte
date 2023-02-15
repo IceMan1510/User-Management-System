@@ -1,13 +1,20 @@
 <script>
+  let loading = true;
+
   import { createEventDispatcher, onMount } from "svelte";
   import { Confirm } from "svelte-confirm";
+  import Loader from "../Shared/Loader/Loader.svelte";
   const dispatch = createEventDispatcher();
+  let outer = 1;
 
   export let userData;
   export let fetchData;
   export let totalRecords;
   export let totalPages;
+  export let searchData;
   export let totalRecordPerPage;
+  export let page;
+  console.log(userData);
 
   /**
    *  Broadcast the delete event once the user clicks on the delete button in the table.
@@ -33,109 +40,134 @@
     dispatch("next", { message: "next" });
   };
   onMount(() => {
-    fetchData();
+    if (searchData === "") {
+      fetchData();
+      setTimeout(() => {
+        loading = false;
+      }, 1000);
+    }
+    fetchData(searchData);
+    setTimeout(() => {
+      loading = false;
+    }, 1000);
   });
 </script>
 
-<body>
-  <div class="table-wrapper">
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Gender</th>
-          <th>Birthday</th>
-          <th>Email</th>
-          <th>Address</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each userData as uData}
+{#if loading}
+  <span><Loader /></span>
+{:else}
+  <body>
+    <div class="table-wrapper">
+      <table class="table table-striped table-hover">
+        <thead>
           <tr>
-            <td>
-              {uData.fName}
-              {uData.mName}
-              {uData.lName}</td
-            >
-            <td>{uData.gender}</td>
-            <td>{uData.dob}</td>
-            <td>{uData.email}</td>
-            <td>{uData.address}</td>
-
-            <td>
-              <span class="but"
-                ><a
-                  class="settings"
-                  data-toggle="tooltip"
-                  title="Edit User Data"
-                  ><i class="material-icons" on:click={handleUpdate(uData)}
-                    >&#xE8B8;</i
-                  ></a
-                ></span
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Birthday</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each userData as uData}
+            <tr>
+              <td>
+                {uData.fName}
+                {uData.mName}
+                {uData.lName}</td
               >
-              <Confirm
-                confirmTitle="Delete"
-                cancelTitle="Cancel"
-                let:confirm={confirmThis}
-                ><span class="but"
+              <td>{uData.gender}</td>
+              <td>{uData.dob}</td>
+              <td>{uData.email}</td>
+              <td>{uData.address}</td>
+
+              <td>
+                <span class="but"
                   ><a
-                    class="delete"
-                    title="Delete User"
+                    class="settings"
                     data-toggle="tooltip"
-                    on:click={() => confirmThis(handleDelete, uData.id)}
-                  >
-                    <path
-                      fill="hsl(200, 40%, 20%)"
-                      d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
-                    /><i class="material-icons">&#xE5C9;</i></a
+                    title="Edit User Data"
+                    ><i class="material-icons" on:click={handleUpdate(uData)}
+                      >&#xE8B8;</i
+                    ></a
                   ></span
                 >
-                <span slot="title"> Delete this user? </span>
-              </Confirm>
-            </td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-    <div class="clearfix">
-      <div class="hint-text">
-        Showing <b>{totalRecordPerPage}</b> out of <b>{totalRecords}</b> entries
-      </div>
-      <ul class="pagination">
-        <li class="page-item">
-          <a
-            href="#"
-            class="page-link"
-            on:click={() => {
-              handlePrev();
-            }}>Previous</a
-          >
-        </li>
-        {#each Array(totalPages) as tp, i}
+                <Confirm
+                  confirmTitle="Delete"
+                  cancelTitle="Cancel"
+                  let:confirm={confirmThis}
+                  ><span class="but"
+                    ><a
+                      class="delete"
+                      title="Delete User"
+                      data-toggle="tooltip"
+                      on:click={() => confirmThis(handleDelete, uData.id)}
+                    >
+                      <path
+                        fill="hsl(200, 40%, 20%)"
+                        d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
+                      /><i class="material-icons">&#xE5C9;</i></a
+                    ></span
+                  >
+                  <span slot="title"> Delete this user? </span>
+                </Confirm>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+      <div class="clearfix">
+        <div class="hint-text">
+          Showing <b>{totalRecordPerPage}</b> out of <b>{totalRecords}</b> entries
+        </div>
+        <ul class="pagination">
           <li class="page-item">
             <a
               href="#"
+              class={1 === page ? "invisible" : "page-link"}
               on:click={() => {
-                handlePage(i);
-              }}
-              class="page-link">{i++ + 1}</a
+                handlePrev();
+                loading = true;
+                setTimeout(() => {
+                  loading = false;
+                }, 500);
+              }}>Previous</a
             >
           </li>
-        {/each}
-        <li class="page-item ">
-          <a
-            href="#"
-            class="page-link"
-            on:click={() => {
-              handleNext();
-            }}>Next</a
-          >
-        </li>
-      </ul>
+          {#each Array(totalPages) as tp, i}
+            <li class={page === i ? "page-item active" : "page-item"}>
+              <a
+                href="#"
+                on:click={() => {
+                  handlePage(i);
+                  loading = true;
+                  setTimeout(() => {
+                    loading = false;
+                  }, 500);
+                }}
+                class="page-link">{i++ + 1}</a
+              >
+            </li>
+          {/each}
+          <li class="page-item ">
+            <a
+              href="#"
+              class={totalPages === page ? "invisible" : "page-link"}
+              on:click={() => {
+                handleNext();
+                loading = true;
+                setTimeout(() => {
+                  loading = false;
+                }, 500);
+              }}>Next</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
+{/if}
 
 <style>
   body {

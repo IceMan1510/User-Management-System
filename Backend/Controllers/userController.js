@@ -1,11 +1,16 @@
 /**
- * @requires module:validator
- * @requires module:Models/readFileModel
- * @requires module:Services/userServices
+ * A controller module for handling user requests from the routers.
+ *
+ * @module Controller
+ * @requires readFileModel
+ * @requires createUserService
+ * @requires getAllUsersService
+ * @requires getSingleUserService
+ * @requires deleteUserService
+ * @requires updateUserService
  */
 const validator = require("validator");
 const { readFileModel } = require("../Models/readFileModel");
-
 const {
   createUserService,
   getAllUsersService,
@@ -13,14 +18,53 @@ const {
   deleteUserService,
   updateUserService,
 } = require("../Services/userServices");
-
 /**
- * A controller that validates the data first from the body and if no discrepancy found it send it toward the services
- * @module addUser
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Add a new user.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - Create new user.
  */
+let checkPwd = (str) => {
+  if (
+    str.length < 8 ||
+    str.length > 50 ||
+    str.search(/\d/) == -1 ||
+    str.search(/[a-zA-Z]/) == -1 ||
+    str.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+\.\,\;\:]/) != -1
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
+var validateContactNumber = (input) => {
+  const regex = /^\d{10}$/; // regex pattern to match exactly 10 digits
+  return regex.test(input);
+};
+var isZipNumber = (zip) => {
+  if (isNaN(zip)) {
+    return false;
+  }
+
+  if (zip.toString().length !== 6) {
+    return false;
+  }
+
+  return true;
+};
+
+var checkDate = (date) => {
+  if (
+    new Date(date).getFullYear() < 1970 ||
+    new Date(date).getFullYear() > 2005 ||
+    date === "Select Date" ||
+    date === ""
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
 exports.addUser = (req, res) => {
   const user = req.body;
   if (
@@ -30,11 +74,20 @@ exports.addUser = (req, res) => {
     user.lName.trim() === "" ||
     !validator.isEmail(user.email) ||
     !validator.isAlpha(user.fName) ||
+    user.contact.trim() === "" ||
+    user.contact.trim().length !== 10 ||
     user.password.trim() === "" ||
     user.address.trim() === "" ||
     user.dob.trim() === "" ||
     user.contact.trim() === "" ||
-    validator.isAlpha(user.contact)
+    !checkPwd(user.password) ||
+    !checkDate(user.dob) ||
+    !validateContactNumber(user.contact) ||
+    !isZipNumber(user.pinCode) ||
+    user.address.trim() === "" ||
+    user.address1.trim() === "" ||
+    user.state === "Select State" ||
+    user.city === ""
   ) {
     res.status(400).send("Please enter appropriate data");
   } else if (isEmailExists(user.email)) {
@@ -45,13 +98,11 @@ exports.addUser = (req, res) => {
   }
 };
 /**
- * A controller that is handling getting all the users data and getting the single user data operation
- * @module getUsers
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Get a list of all users.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - A list of 8 users per page.
  */
-
 exports.getUsers = (req, res) => {
   const params = req.params;
   if (JSON.stringify(params) === "{}") {
@@ -66,11 +117,10 @@ exports.getUsers = (req, res) => {
   }
 };
 /**
- * A controller that is taking the id from the url and sending it toward the service to delete that specific id
- * @module deleteUser
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Delete a user.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - Delete response, if deleted or not.
  */
 exports.deleteUser = (req, res) => {
   const users = readFileModel();
@@ -83,11 +133,10 @@ exports.deleteUser = (req, res) => {
   }
 };
 /**
- * A controller that is handling getting the user id and data which needs to be updated from the user and after validation it is sending it toward the services to perform write operation.
- * @module updateUser
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Get a list of all users.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - Update response whether the user has been updated or not.
  */
 exports.updateUser = (req, res) => {
   let user = req.body;
@@ -117,10 +166,13 @@ exports.updateUser = (req, res) => {
 };
 
 /**
- *  Retrieves if an email exists in th db.
- *  @param {email} email identifier.
- *  @returns {boolean} if the email exists or not.
- */
+
+Checks if the email is exists in the database.
+@param {string} email - The email which has to be checked.
+@param {number} y - The second number to add.
+@returns {boolean} True if the email exists, false if it doesn't.
+*/
+
 const isEmailExists = (email) => {
   const users = readFileModel();
   for (let i = 0; i < users.length; i++) {

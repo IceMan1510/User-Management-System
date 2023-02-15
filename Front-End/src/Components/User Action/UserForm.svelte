@@ -1,15 +1,72 @@
 <script>
+  //  disabled={validateButton(userDetail)}
+  let firstLoad = false;
   import { createEventDispatcher } from "svelte";
+  import { empty } from "svelte/internal";
+  const handleButton = (dataToBeUpdated) => {
+    firstLoad = true;
+    if (dataToBeUpdated === undefined || dataToBeUpdated === "") {
+      handlePost();
+    } else {
+      handleUpdate();
+    }
+  };
 
+  let checkPwd = (str) => {
+    if (
+      str.length < 8 ||
+      str.length > 50 ||
+      str.search(/\d/) == -1 ||
+      str.search(/[a-zA-Z]/) == -1 ||
+      str.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+\.\,\;\:]/) != -1
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
   const dispatch = createEventDispatcher();
   let userDetail = "";
-  function containsSpecialChars(str) {
-    const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  var containsAlpha = (str) => {
+    const specialChars = /^[a-zA-Z]+$/;
     return specialChars.test(str);
-  }
+  };
 
   var validation = (field) => {
-    if (field.trim() === "" || containsSpecialChars(field)) {
+    if (field.trim() === "" || !containsAlpha(field)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  var validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  var validateContactNumber = (input) => {
+    const regex = /^\d{10}$/; // regex pattern to match exactly 10 digits
+    return regex.test(input);
+  };
+  var isZipNumber = (zip) => {
+    if (isNaN(zip)) {
+      return false;
+    }
+
+    if (zip.toString().length !== 6) {
+      return false;
+    }
+
+    return true;
+  };
+
+  var checkDate = (date) => {
+    if (
+      new Date(date).getFullYear() < 1970 ||
+      new Date(date).getFullYear() > 2005 ||
+      userDetail.dob === "Select Date" ||
+      userDetail.dob === ""
+    ) {
       return false;
     } else {
       return true;
@@ -30,6 +87,10 @@
       confirmPassword: "",
       contact: "",
       address: "",
+      address1: "",
+      city: "",
+      state: "Select State",
+      pinCode: "",
     };
   } else {
     userDetail = {
@@ -44,6 +105,10 @@
       confirmPassword: dataToBeUpdated.password,
       contact: dataToBeUpdated.contact,
       address: dataToBeUpdated.address,
+      address1: dataToBeUpdated.address1,
+      city: dataToBeUpdated.city,
+      state: dataToBeUpdated.state,
+      pinCode: dataToBeUpdated.pinCode,
     };
   }
   const handlePost = () => {
@@ -51,25 +116,6 @@
   };
   const handleUpdate = () => {
     dispatch("update", userDetail);
-  };
-  var validateButton = (userDetail) => {
-    if (
-      !validation(userDetail.fName) ||
-      userDetail.fName.trim() === "" ||
-      !validation(userDetail.mName) ||
-      userDetail.mName.trim() === "" ||
-      userDetail.lName.trim() === "" ||
-      !validation(userDetail.lName) ||
-      userDetail.email.trim() === "" ||
-      userDetail.password !== userDetail.confirmPassword ||
-      userDetail.gender.trim() === "" ||
-      userDetail.address.trim() === "" ||
-      userDetail.contact.trim().length !== 10
-    ) {
-      return true;
-    } else {
-      return false;
-    }
   };
 </script>
 
@@ -86,14 +132,16 @@
           <input
             type="text"
             name="firstName"
-            class={!validation(userDetail.fName)
+            title="Only alphabets are allowed"
+            class={firstLoad && !validation(userDetail.fName)
               ? "form-control is-invalid"
-              : "form-control is-valid"}
+              : "form-control"}
             bind:value={userDetail.fName}
             placeholder="First Name"
             autofocus="on"
             required
           />
+          <div class="invalid-feedback">Please enter a valid first name</div>
         </div>
         <div class="two">
           <label for="middleName" class="fl fontLabel">
@@ -102,13 +150,15 @@
           <input
             type="text"
             name="LastName"
+            title="Only alphabets are allowed"
             bind:value={userDetail.mName}
             placeholder="Middle Name"
-            class={!validation(userDetail.mName)
-              ? "form-control is-invalid "
-              : "form-control is-valid"}
+            class={firstLoad && !validation(userDetail.mName)
+              ? "form-control is-invalid"
+              : "form-control"}
             required
           />
+          <div class="invalid-feedback">Please enter a valid middle name</div>
         </div>
         <div class="three">
           <label for="lastName" class="fl fontLabel">
@@ -117,29 +167,55 @@
           <input
             type="text"
             name="firstName"
+            title="Only alphabets are allowed"
             bind:value={userDetail.lName}
             placeholder="Last Name"
-            class={!validation(userDetail.lName)
-              ? "form-control is-invalid "
-              : "form-control is-valid"}
+            class={firstLoad && !validation(userDetail.lName)
+              ? "form-control is-invalid"
+              : "form-control"}
             required
           />
+          <div class="invalid-feedback">Please enter a valid last name</div>
         </div>
       </div>
-      <label for="email" class="fl fontLabel">
-        Email ID <span class="required">*</span> :
-      </label>
-      <div class="emailField">
-        <input
-          type="email"
-          required
-          name="email"
-          bind:value={userDetail.email}
-          placeholder="Email Id"
-          class={userDetail.email.trim() === ""
-            ? "form-control is-invalid"
-            : "form-control is-valid"}
-        />
+
+      <div class="twoPassword">
+        <div class="pwd">
+          <label for="email" class="fl fontLabel">
+            Email ID <span class="required">*</span> :</label
+          >
+          <input
+            type="email"
+            required
+            name="email"
+            bind:value={userDetail.email}
+            title="Enter a unique and valid email id"
+            class={firstLoad && !validateEmail(userDetail.email)
+              ? "form-control is-invalid"
+              : "form-control"}
+            placeholder="Email Id"
+          />
+          <div class="invalid-feedback">Please enter a valid email</div>
+        </div>
+        <div class="cnfpwd">
+          <label for="Contact" class="fl fontLabel">
+            Contact <span class="required">*</span> :</label
+          >
+          <input
+            type="Contact"
+            required
+            name="Contact"
+            title="Should be equal to 10 digits"
+            class={firstLoad && !validateContactNumber(userDetail.contact)
+              ? "form-control is-invalid"
+              : "form-control"}
+            bind:value={userDetail.contact}
+            placeholder="Contact"
+          />
+          <div class="invalid-feedback">
+            Enter a valid 10 digit contact number
+          </div>
+        </div>
       </div>
       <div class="twoPassword">
         <div class="pwd">
@@ -150,13 +226,17 @@
             type="Password"
             required
             name="password"
+            title="Password should be greater than 8 digits"
             bind:value={userDetail.password}
             placeholder="Password"
-            class={userDetail.password !== userDetail.confirmPassword ||
-            userDetail.password === ""
+            class={firstLoad && !checkPwd(userDetail.password)
               ? "form-control is-invalid"
-              : "form-control is-valid"}
+              : "form-control"}
           />
+          <div class="invalid-feedback">
+            Password should be greater than 8 digits and at must contain 1
+            number, 1 special character, 1 upper and 1 lower case letter.
+          </div>
         </div>
         <div class="cnfpwd">
           <label for="password" class="fl fontLabel">
@@ -166,15 +246,20 @@
             type="Password"
             required
             name="password"
-            class={userDetail.password !== userDetail.confirmPassword ||
-            userDetail.confirmPassword === ""
+            title="Confirm Password should match password "
+            class={firstLoad &&
+            userDetail.password !== userDetail.confirmPassword
               ? "form-control is-invalid"
-              : "form-control is-valid"}
+              : "form-control"}
             bind:value={userDetail.confirmPassword}
             placeholder="Password"
           />
+          <div class="invalid-feedback">
+            Password and Confirm Password should match
+          </div>
         </div>
       </div>
+
       <div class="twoMore">
         <div class="oneTest">
           <label for="dateOfBirth" class="fl fontLabel">
@@ -183,69 +268,190 @@
           <input
             type="date"
             name="dateOfBirth"
-            class="textBox"
+            class={firstLoad && !checkDate(userDetail.dob)
+              ? "form-control is-invalid"
+              : "form-control"}
             bind:value={userDetail.dob}
-            placeholder="dd-mm-yyyy"
+            placeholder="Enter Date"
             onfocus="(this.type='date')"
             min="1990-01-01"
             max="2005-12-31"
             required
           />
+          <div class="invalid-feedback">Please enter a valid date</div>
         </div>
         <div class="gender">
-          <label for="gender" class="fl fontLabel">
+          <label for="gender" class="fontLabel">
             Gender <span class="required">*</span> :
-          </label>
-          <select name="cars" class="genderBox" bind:value={userDetail.gender}>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+          </label>&nbsp; &nbsp;
+          <input
+            title="Select Gender"
+            type="radio"
+            name="Gender"
+            value="Male"
+            bind:group={userDetail.gender}
+            required
+          />Male &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <input
+            type="radio"
+            name="Gender"
+            value="Female"
+            bind:group={userDetail.gender}
+            required
+          />
+          Female &nbsp; &nbsp; &nbsp; &nbsp;
+          <input
+            type="radio"
+            name="Gender"
+            value="Other"
+            bind:group={userDetail.gender}
+            required
+          />
+          Other
+          <div
+            class={firstLoad && userDetail.gender.trim() === ""
+              ? "address"
+              : "invisible"}
+          >
+            Please select a gender
+          </div>
         </div>
       </div>
-
       <div class="twoPassword">
         <div class="pwd">
-          <label for="password" class="fl fontLabel">
-            Address <span class="required">*</span> :</label
+          <label for="email" class="fl fontLabel">
+            Address Line 1 <span class="required">*</span> :</label
           >
           <input
+            type="Address Line 1"
+            required
+            name="Address Line 1"
+            title="Street address, P.O box, company name, c/o"
+            bind:value={userDetail.address}
+            placeholder="Address Line 1"
+            class={firstLoad && userDetail.address.trim() === ""
+              ? "form-control is-invalid"
+              : "form-control"}
+          />
+          <div class="invalid-feedback">Please enter a valid address line</div>
+        </div>
+        <div class="cnfpwd">
+          <label for="Address Line 2" class="fl fontLabel">
+            Address Line 2 <span class="required">*</span> :</label
+          >
+          <input
+            type="Address Line 2"
+            required
+            title="Apartment, suite, unit, building, floor, etc"
+            name="Address Line 2"
+            class={firstLoad && userDetail.address1.trim() === ""
+              ? "form-control is-invalid"
+              : "form-control"}
+            bind:value={userDetail.address1}
+            placeholder="Address Line 2"
+          />
+          <div class="invalid-feedback">Please enter a valid address line</div>
+        </div>
+      </div>
+      <div class="threeNames">
+        <div class="one">
+          <label for="address" class="fl fontLabel">
+            City <span class="required">*</span> :</label
+          >
+          <input
+            title="Enter your City"
             type="Location"
             required
             name="Location"
-            bind:value={userDetail.address}
-            placeholder="Location"
-            class={userDetail.address.trim() === ""
+            bind:value={userDetail.city}
+            placeholder="City"
+            class={firstLoad && userDetail.city.trim() === ""
               ? "form-control is-invalid"
-              : "form-control is-valid"}
+              : "form-control"}
           />
+          <div class="invalid-feedback">Please enter a valid city</div>
         </div>
-        <div class="cnfpwd">
-          <label for="Contact" class="fl fontLabel">
-            Contact <span class="required">*</span> :</label
+        <div class="two">
+          <label for="state" class="fl fontLabel">
+            State <span class="required">*</span> :</label
+          >
+          <select
+            title="Select State"
+            name="state"
+            id="state"
+            class={firstLoad && userDetail.state === "Select State"
+              ? "form-control is-invalid"
+              : "form-control"}
+            bind:value={userDetail.state}
+          >
+            <option value="Select State">{userDetail.state}</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Andaman and Nicobar Islands"
+              >Andaman and Nicobar Islands</option
+            >
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chandigarh">Chandigarh</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Dadar and Nagar Haveli"
+              >Dadar and Nagar Haveli</option
+            >
+            <option value="Daman and Diu">Daman and Diu</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Lakshadweep">Lakshadweep</option>
+            <option value="Puducherry">Puducherry</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
+          </select>
+          <div class="invalid-feedback">Please enter a valid State</div>
+        </div>
+        <div class="three">
+          <label for="state" class="fl fontLabel">
+            Pin Code <span class="required">*</span> :</label
           >
           <input
-            type="Contact"
-            required
-            name="Contact"
-            class={userDetail.contact.length === 10
-              ? "form-control is-valid"
-              : "form-control is-invalid"}
-            bind:value={userDetail.contact}
-            placeholder="Contact"
+            title="Enter Pin Code"
+            type="text"
+            name="pin"
+            class={firstLoad && !isZipNumber(userDetail.pinCode)
+              ? "form-control is-invalid"
+              : "form-control"}
+            placeholder="Pin Code"
+            pattern="[0-9]{4}"
+            maxlength="6"
+            bind:value={userDetail.pinCode}
           />
+          <div class="invalid-feedback">Please enter a valid pin code</div>
         </div>
       </div>
 
       <button
         class=" btn btn-primary button"
-        disabled={validateButton(userDetail)}
         on:click={() => {
-          if (dataToBeUpdated === undefined || dataToBeUpdated === "") {
-            handlePost();
-          } else {
-            handleUpdate();
-          }
+          handleButton(dataToBeUpdated);
         }}>Submit</button
       >
     </div>
@@ -302,16 +508,13 @@
   .gender {
     width: 60%;
   }
-  /* .textBoxO {
-    height: 35px;
-    width: 317px;
-    border: 1px solid black;
-    padding-left: 20px;
-  } */
   .name {
     height: 35px;
     border: 1px solid black;
     padding-left: 20px;
+  }
+  .invalid-feedback {
+    margin-top: -0.75rem;
   }
   .radioB {
     display: flex;
@@ -346,5 +549,11 @@
   }
   .oneTest {
     width: 41%;
+  }
+  .address {
+    margin-top: 0;
+    font-size: 0.875em;
+    margin-left: 15px;
+    color: red;
   }
 </style>

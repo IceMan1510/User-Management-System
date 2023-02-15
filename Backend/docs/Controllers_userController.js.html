@@ -26,9 +26,19 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const validator = require("validator");
+            <pre class="prettyprint source linenums"><code>/**
+ * A controller module for handling user requests from the routers.
+ *
+ * @module Controller
+ * @requires readFileModel
+ * @requires createUserService
+ * @requires getAllUsersService
+ * @requires getSingleUserService
+ * @requires deleteUserService
+ * @requires updateUserService
+ */
+const validator = require("validator");
 const { readFileModel } = require("../Models/readFileModel");
-
 const {
   createUserService,
   getAllUsersService,
@@ -36,13 +46,11 @@ const {
   deleteUserService,
   updateUserService,
 } = require("../Services/userServices");
-
 /**
- * A controller that validates the data first from the body and if no discrepancy found it send it toward the services
- * @module addUser
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Add a new user.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - Create new user.
  */
 
 exports.addUser = (req, res) => {
@@ -69,17 +77,16 @@ exports.addUser = (req, res) => {
   }
 };
 /**
- * A controller that is handling getting all the users data and getting the single user data operation
- * @module getUsers
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Get a list of all users.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - A list of 8 users per page.
  */
 exports.getUsers = (req, res) => {
   const params = req.params;
   if (JSON.stringify(params) === "{}") {
-    var serviceResponse = getAllUsersService;
-    res.status(200).send(serviceResponse());
+    var serviceResponse = getAllUsersService(req.query.page);
+    res.status(200).send(serviceResponse);
   } else {
     var serviceResponse = getSingleUserService(params.id);
     if (serviceResponse === false) {
@@ -89,11 +96,10 @@ exports.getUsers = (req, res) => {
   }
 };
 /**
- * A controller that is taking the id from the url and sending it toward the service to delete that specific id
- * @module deleteUser
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Delete a user.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - Delete response, if deleted or not.
  */
 exports.deleteUser = (req, res) => {
   const users = readFileModel();
@@ -106,11 +112,10 @@ exports.deleteUser = (req, res) => {
   }
 };
 /**
- * A controller that is handling getting the user id and data which needs to be updated from the user and after validation it is sending it toward the services to perform write operation.
- * @module updateUser
- *  @param {*} req
- * @param {*} res
- *  @returns {status} 200 for ok and 400 for bad request.
+ * Get a list of all users.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - Update response whether the user has been updated or not.
  */
 exports.updateUser = (req, res) => {
   let user = req.body;
@@ -140,10 +145,13 @@ exports.updateUser = (req, res) => {
 };
 
 /**
- *  Retrieves if an email exists in th db.
- *  @param {email} email identifier.
- *  @returns {boolean} if the email exists or not.
- */
+
+Checks if the email is exists in the database.
+@param {string} email - The email which has to be checked.
+@param {number} y - The second number to add.
+@returns {boolean} True if the email exists, false if it doesn't.
+*/
+
 const isEmailExists = (email) => {
   const users = readFileModel();
   for (let i = 0; i &lt; users.length; i++) {
@@ -162,13 +170,13 @@ const isEmailExists = (email) => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-addUser.html">addUser</a></li><li><a href="module-createUserService.html">createUserService</a></li><li><a href="module-deleteUser.html">deleteUser</a></li><li><a href="module-getAllUsersService.html">getAllUsersService</a></li><li><a href="module-getSingleUserService.html">getSingleUserService</a></li><li><a href="module-getUsers.html">getUsers</a></li><li><a href="module-updateUser.html">updateUser</a></li><li><a href="module-updateUserService.html">updateUserService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#express">express</a></li><li><a href="global.html#readFileModel">readFileModel</a></li><li><a href="global.html#writeFileModel">writeFileModel</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Controller.html">Controller</a></li><li><a href="module-Services.html">Services</a></li><li><a href="module-User%2520Routes.html">User Routes</a></li><li><a href="module-index.html">index</a></li></ul><h3>Global</h3><ul><li><a href="global.html#readFileModel">readFileModel</a></li><li><a href="global.html#writeFileModel">writeFileModel</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Thu Feb 09 2023 15:07:57 GMT+0530 (India Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Tue Feb 14 2023 14:36:02 GMT+0530 (India Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

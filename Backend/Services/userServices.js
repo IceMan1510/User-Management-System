@@ -1,21 +1,21 @@
 /**
- * @requires module:bcrypt
- * @requires modules:uuid
- * @requires modules:Models/readFileModel
- * @requires modules:Models/writeFileModel
-
+ * A module for handling requests from the controller and providing responses to the controller back.
+ *
+ * @module Services
+ * @requires bcrypt
+ * @requires uuidv4
+ * @requires readFileModel
+ * @requires writeFileModel
  */
 const bcrypt = require("bcrypt");
 
 const { v4: uuidv4 } = require("uuid");
 const { readFileModel } = require("../Models/readFileModel");
 const { writeFileModel } = require("../Models/writeFileModel");
-
 /**
- * A service that takes the takes an object from the user to add that into db
- * @module createUserService
- *  @param {object} - The user data object from the addUser controller *
- *  @returns {object} - Success status and message
+ * Create a new user service.
+ * @param {Object} user - The user object passed from the controller.
+ * @returns {Object} - Return the success status and success message.
  */
 exports.createUserService = (user) => {
   const hash = bcrypt.hashSync(user.password, 10);
@@ -27,18 +27,15 @@ exports.createUserService = (user) => {
   writeFileModel(json);
   return { success: true, body: `Thank you for registration ${user.fName}` };
 };
-
 /**
- * A service that return the complete user list
- * @module getAllUsersService
- *  @param {void}
- *
- *  @returns {Array} - Array of user data objects
+ * Get user by page service.
+ * @param {String} page - The page number passed from the controller.
+ * @returns {Object} - Returns the totalRecords, totalPages and the data for the specific page.
  */
+
 exports.getAllUsersService = (page) => {
   var users = readFileModel();
   var size = users.length;
-
   var s = (page - 1) * 8;
   var e = page * 8;
   var pageLimit = Math.ceil(size / 8);
@@ -50,15 +47,14 @@ exports.getAllUsersService = (page) => {
 };
 
 /**
- * A service that return the user object from db
- * @module getSingleUserService
- *  @param {id} - The service will search by the id
- *  @returns {object} - user data object
+ * Get single user by email service.
+ * @param {String} id - The email id passed from the controller.
+ * @returns {Object} - Returns the object of that user else return false.
  */
 exports.getSingleUserService = (id) => {
   const users = readFileModel();
   var result = users.find(function (e) {
-    return e.id === id;
+    return e.email === id;
   });
   if (result === undefined) {
     return false;
@@ -66,12 +62,12 @@ exports.getSingleUserService = (id) => {
     return result;
   }
 };
+
 /**
- * A service that return the user object from db
- * @module getSingleUserService
- *  @param {filteredUsers} - The array of objects after validations
- *@param {id} -The service will search by the id
- *  @returns {object} - The success status and a message
+ * Get delete user.
+ * @param {Object} filteredUsers - The users object.
+ * @param {string} id - The id which has to deleted.
+ * @returns {Object} - The success status and success response.
  */
 exports.deleteUserService = (filteredUsers, id) => {
   let json = JSON.stringify(filteredUsers);
@@ -80,11 +76,10 @@ exports.deleteUserService = (filteredUsers, id) => {
   return { success: true, response: `User is deleted with id ${id}` };
 };
 /**
- * A service that updates the user object data
- * @module updateUserService
- *  @param {id} - The id of the user object
- *@param {body} -The body which needs to be updated in the array of objects
- *  @returns {object} - The success status and a message.
+ * The update user service.
+ * @param {String} id - The users object.
+ * @param {object} body - The body object from the user.
+ * @returns {Object} - The success status and success response.
  */
 exports.updateUserService = (id, body) => {
   let users = readFileModel();
@@ -108,6 +103,10 @@ exports.updateUserService = (id, body) => {
     users[index].password = hash;
     users[index].contact = dataToBeUpdated.contact;
     users[index].address = dataToBeUpdated.address;
+    users[index].address1 = dataToBeUpdated.address1;
+    users[index].city = dataToBeUpdated.city;
+    users[index].state = dataToBeUpdated.state;
+    users[index].pinCode = dataToBeUpdated.pinCode;
 
     let json = JSON.stringify(users);
     writeFileModel(json);

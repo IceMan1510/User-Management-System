@@ -1,8 +1,9 @@
 /**
- * @requires module:express
- * @requires module:Routes/userRoutes.js
- * @requires module:cors
- * @requires module:body-parser
+ * A module for entertaining the various request and route them towards the controller for operations.
+ * @module index
+ * @requires express
+ * @requires ./Routes/userRoutes.js
+ * @requires body-parser
  */
 const express = require("express");
 const userRoute = require("./Routes/userRoutes.js");

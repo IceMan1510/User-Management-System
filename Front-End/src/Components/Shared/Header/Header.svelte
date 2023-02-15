@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
-
+  $: searchField = "";
+  console.log(searchField);
   const dispatch = createEventDispatcher();
 </script>
 
@@ -9,6 +10,7 @@
     <div class="col-sm-5">
       <h2>User <b>Management</b></h2>
     </div>
+
     <div class="col-sm-7">
       <a class="btn btn-secondary"
         ><i
@@ -19,6 +21,7 @@
         >
         <span>Add New User</span></a
       >
+
       <a class="btn btn-secondary"
         ><i
           class="material-icons"
@@ -28,6 +31,19 @@
         >
         <span>User Dashboard</span></a
       >
+      <input
+        type="text"
+        placeholder="Email To Search + Enter"
+        bind:value={searchField}
+        on:keypress={(e) => {
+          if (e.key === "Enter") {
+            console.log(searchField);
+            dispatch("message", { block: "searchField", data: searchField });
+
+            searchField = "";
+          }
+        }}
+      />
     </div>
   </div>
 </div>
@@ -69,5 +85,13 @@
   .table-title .btn span {
     float: left;
     margin-top: 2px;
+  }
+  input[type="text"] {
+    float: right;
+    padding: 4px;
+    border: none;
+    margin-top: 0px;
+    margin-right: 0px;
+    font-size: 16px;
   }
 </style>

@@ -4,14 +4,19 @@
   import toast, { Toaster } from "svelte-french-toast";
   import UserForm from "../User Action/UserForm.svelte";
   import Header from "../Shared/Header/Header.svelte";
+  let foundSearchData = [];
   let userData = [];
   let dataToBeUpdated = "";
   let totalPages = 0;
   let totalRecords = 0;
+  let loading = true;
   $: page = 1;
+
+  let searchData = "";
+
   let totalRecordPerPage = "";
 
-  let block = "dashboard";
+  $: block = "userForm";
   $: buttonStatusOnEvent = (event) => {
     if (event.detail.block === "userForm") {
       block = "userForm";
@@ -19,6 +24,11 @@
     } else if (event.detail.block === "dashboard") {
       block = "dashboard";
       console.log(block);
+    } else if (event.detail.block === "searchField") {
+      block = "searchField";
+      searchData = event.detail.data;
+
+      getSingleId(searchData);
     }
   };
   $: pageNumber = (e) => {
@@ -43,12 +53,17 @@
         method: "GET",
       });
       let response = await res.json();
+      console.log(response.data);
       userData = response.data;
       totalPages = response.totalPages; // Total number of pages (totalrecord/8)
       totalRecords = response.totalRecords; //Total record in the db
       totalRecordPerPage = userData.length; //Records per page
     } catch (error) {
       console.log(error);
+    } finally {
+      () => {
+        loading = false;
+      };
     }
   };
 
@@ -118,6 +133,8 @@
               password: updatedData.password,
               contact: updatedData.contact,
               address: updatedData.address,
+              state: updatedData.state,
+              pinCode: updatedData.pinCode,
             }),
           }
         );
@@ -141,63 +158,71 @@
       console.log(error);
     }
   };
+  const getSingleId = async (email) => {
+    try {
+      const url = `http://localhost:4000/user/${email}`;
+      console.log(url);
+      const res = await fetch(url, {
+        method: "GET",
+      });
+      let response = await res.json();
+      // foundSearchData = foundSearchData.push(response);
+      foundSearchData[0] = response;
+      console.log(foundSearchData);
+      totalPages = 1; // Total number of pages (totalrecord/8)
+      totalRecords = 1; //Total record in the db
+      totalRecordPerPage = 1; //Records per page
+    } catch (error) {
+      console.log(error.text);
+      toast.error(`Data Not Found`, {
+        position: "bottom-center",
+      });
+      block = "dashboard";
+    }
+  };
 
   const doPost = async (e) => {
     // console.log(e.detail);
     try {
       let dataToBeAdded = e.detail;
-      if (
-        dataToBeAdded.fName.trim() === "" ||
-        dataToBeAdded.mName.trim() === "" ||
-        dataToBeAdded.lName.trim() === ""
-      ) {
-        toast.error(`Name fields cannot be blank`, {
+      if (dataToBeAdded.confirmPassword !== dataToBeAdded.password) {
+        dataToBeAdded.password = "";
+      }
+      const res = await fetch("http://localhost:4000/user/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fName: dataToBeAdded.fName,
+          mName: dataToBeAdded.mName,
+          lName: dataToBeAdded.lName,
+          gender: dataToBeAdded.gender,
+          dob: dataToBeAdded.dob,
+          email: dataToBeAdded.email,
+          password: dataToBeAdded.password,
+          contact: dataToBeAdded.contact,
+          address: dataToBeAdded.address,
+          state: dataToBeAdded.state,
+          pinCode: dataToBeAdded.pinCode,
+        }),
+      });
+
+      const response = await res.text();
+      const status = await res.status;
+      console.log(response);
+      console.log(status);
+      if (status === 200) {
+        block = "dashboard";
+        toast.success(`${response}`, {
           position: "bottom-center",
         });
+        fetchData();
+        page = totalPages;
       } else {
-        const res = await fetch("http://localhost:4000/user/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fName: dataToBeAdded.fName,
-            mName: dataToBeAdded.mName,
-            lName: dataToBeAdded.lName,
-            gender: dataToBeAdded.gender,
-            dob: dataToBeAdded.dob,
-            email: dataToBeAdded.email,
-            password: dataToBeAdded.password,
-            contact: dataToBeAdded.contact,
-            address: dataToBeAdded.address,
-          }),
+        toast.error(`${response}`, {
+          position: "bottom-center",
         });
-        console.log(dataToBeAdded.fName);
-        console.log(dataToBeAdded.mName);
-        console.log(dataToBeAdded.lName);
-        console.log(dataToBeAdded.gender);
-        console.log(dataToBeAdded.dob);
-        console.log(dataToBeAdded.email);
-        console.log(dataToBeAdded.password);
-        console.log(dataToBeAdded.contact);
-        console.log(dataToBeAdded.address);
-
-        const response = await res.text();
-        const status = await res.status;
-        console.log(response);
-        console.log(status);
-        if (status === 200) {
-          block = "dashboard";
-          toast.success(`${response}`, {
-            position: "bottom-center",
-          });
-          fetchData();
-          page = totalPages;
-        } else {
-          toast.error(`${response}`, {
-            position: "bottom-center",
-          });
-        }
       }
     } catch (error) {
       console.log(error);
@@ -224,4 +249,20 @@
 {:else if block === "userForm"}
   <UserForm on:post={doPost} />
 {:else if block === "updateUser"}
-  <UserForm {dataToBeUpdated} on:update={updatingTheData} />{/if}
+  <UserForm {dataToBeUpdated} on:update={updatingTheData} />
+{:else if block === "searchField"}
+  <Table
+    userData={foundSearchData}
+    fetchData={getSingleId}
+    {totalRecords}
+    {totalPages}
+    {searchData}
+    {totalRecordPerPage}
+    {page}
+    on:delete={deleteClick}
+    on:update={updateDataSend}
+    on:page={pageNumber}
+    on:next={pageNumber}
+    on:prev={pageNumber}
+  />
+{/if}

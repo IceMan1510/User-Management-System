@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: Models/writeFileModel.js</title>
+    <title>JSDoc: Module: index</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,39 +17,106 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: Models/writeFileModel.js</h1>
+    <h1 class="page-title">Module: index</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>const fs = require("fs");
-/**
- * @param {object} json -  json we are getting from the user
- * @param {string} id - ID
- * @param {string} fName - First Name
- * @param {string} mName - Middle Name
- * @param {string} lName - Last Name
- * @param {String} gender - Gender
- * @param {String} email - E-Mail
- * @param {string} password - Password
- * @param {string} address - Location
- * @param {string} contact - Phone Number
- * @returns {} - the file gets written
- */
-exports.writeFileModel = (json) => {
-  fs.writeFile("data.json", json, (err) => {
-    if (err) {
-      return err;
-    }
-  });
-};
-</code></pre>
-        </article>
-    </section>
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>A module for entertaining the various request and route them towards the controller for operations.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li>module:express</li>
+        
+            <li>module:./Routes/userRoutes.js</li>
+        
+            <li>module:body-parser</li>
+        </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
