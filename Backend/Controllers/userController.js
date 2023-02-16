@@ -114,6 +114,7 @@ exports.addUser = (req, res) => {
 exports.getUsers = (req, res) => {
   const params = req.params;
   if (JSON.stringify(params) === "{}") {
+    console.log(JSON.stringify(params) === "{}");
     var serviceResponse = getAllUsersService(req.query.page);
     res.status(200).send(serviceResponse);
   } else {

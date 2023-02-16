@@ -2,6 +2,8 @@
   let loading = true;
 
   import { createEventDispatcher, onMount } from "svelte";
+  import { tooltip } from "@svelte-plugins/tooltips";
+
   import { Confirm } from "svelte-confirm";
   import Loader from "../Shared/Loader/Loader.svelte";
   const dispatch = createEventDispatcher();
@@ -20,7 +22,6 @@
   export let searchData;
   export let totalRecordPerPage;
   export let page;
-  console.log(page);
 
   /**
    *  Broadcast the delete event once the user clicks on the delete button in the table.
@@ -52,6 +53,7 @@
         loading = false;
       }, 1000);
     }
+
     fetchData(searchData);
     setTimeout(() => {
       loading = false;
@@ -92,13 +94,17 @@
                 <span class="but"
                   ><a
                     class="settings"
-                    data-toggle="tooltip"
-                    title="Edit User Data"
+                    use:tooltip={{
+                      content: "Edit Record",
+                      position: "bottom",
+                      arrow: false,
+                    }}
                     ><i class="material-icons" on:click={handleUpdate(uData)}
                       >&#xE8B8;</i
                     ></a
                   ></span
                 >
+
                 <Confirm
                   confirmTitle="Delete"
                   cancelTitle="Cancel"
@@ -106,8 +112,11 @@
                   ><span class="but"
                     ><a
                       class="delete"
-                      title="Delete User"
-                      data-toggle="tooltip"
+                      use:tooltip={{
+                        content: "Delete Record",
+                        position: "bottom",
+                        arrow: false,
+                      }}
                       on:click={() => confirmThis(handleDelete, uData.id)}
                     >
                       <path
@@ -125,7 +134,9 @@
       </table>
       <div class="clearfix">
         <div class="hint-text">
-          Showing <b>{totalRecordPerPage}</b> out of <b>{totalRecords}</b> entries
+          Showing <b>{(page - 1) * 8 + 1}</b> to
+          <b>{(page - 1) * 8 + totalRecordPerPage}</b> entries out of
+          <b>{totalRecords}</b>
         </div>
         <ul class="pagination">
           <li class="page-item">
@@ -253,7 +264,7 @@
     font-size: 13px;
     min-width: 30px;
     min-height: 30px;
-    color: #999;
+    color: #212529;
     margin: 0 2px;
     line-height: 30px;
     border-radius: 2px !important;

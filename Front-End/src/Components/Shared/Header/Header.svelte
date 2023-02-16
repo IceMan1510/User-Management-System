@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   $: searchField = "";
+
   console.log(searchField);
   const dispatch = createEventDispatcher();
 </script>
@@ -12,35 +13,34 @@
     </div>
 
     <div class="col-sm-7">
-      <a class="btn btn-secondary"
-        ><i
-          class="material-icons"
-          on:click={() => {
-            dispatch("message", { block: "userForm" });
-          }}>&#xE147;</i
-        >
-        <span>Add New User</span></a
+      <button
+        class="btn btn-secondary"
+        on:click={() => {
+          dispatch("message", { block: "userForm" });
+        }}
+        ><i class="material-icons">&#xE147;</i>
+        <span>Add New User</span></button
       >
 
-      <a class="btn btn-secondary"
-        ><i
-          class="material-icons"
-          on:click={() => {
-            dispatch("message", { block: "dashboard" });
-          }}>&#xe88a;</i
-        >
-        <span>User Dashboard</span></a
+      <button
+        class="btn btn-secondary"
+        on:click={() => {
+          dispatch("message", { block: "dashboard" });
+        }}
+        ><i class="material-icons">&#xe88a;</i>
+        <span>User Dashboard</span></button
       >
       <input
-        type="text"
+        type="search"
         placeholder="Email To Search + Enter"
         bind:value={searchField}
         on:keypress={(e) => {
           if (e.key === "Enter") {
             console.log(searchField);
-            dispatch("message", { block: "searchField", data: searchField });
-
-            searchField = "";
+            dispatch("message", {
+              block: "searchField",
+              data: searchField.trim(),
+            });
           }
         }}
       />
@@ -86,12 +86,15 @@
     float: left;
     margin-top: 2px;
   }
-  input[type="text"] {
+
+  [type="search"] {
     float: right;
     padding: 4px;
     border: none;
     margin-top: 0px;
     margin-right: 0px;
     font-size: 16px;
+    height: 34px;
+    width: 204px;
   }
 </style>

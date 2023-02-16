@@ -177,6 +177,7 @@
       totalPages = 1; // Total number of pages (totalrecord/8)
       totalRecords = 1; //Total record in the db
       totalRecordPerPage = 1; //Records per page
+      console.log();
     } catch (error) {
       console.log(error.text);
       toast.error(`Data Not Found`, {

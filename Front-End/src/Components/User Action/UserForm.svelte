@@ -223,7 +223,7 @@
       <div class="twoPassword">
         <div class="pwd">
           <label for="password" class="fl fontLabel">
-            Password <span class="required">*</span> :</label
+            {"Password"} <span class="required">*</span> :</label
           >
           <input
             type="Password"
@@ -486,13 +486,13 @@
     text-align: center;
     font-size: 25px;
     font-weight: bold;
-    color: rgb(32, 99, 155);
+    color: #212529;
     margin-top: 20px;
     margin-bottom: -30px;
   }
   .fontLabel {
     font-size: 15px;
-    color: rgb(32, 99, 155);
+    color: #212529;
     font-weight: bold;
   }
   .container {
